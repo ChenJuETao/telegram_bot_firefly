@@ -1,0 +1,8 @@
+{
+  "build": {
+    "command": "pip install -r requirements.txt"
+  },
+  "run": {
+    "command": "python bot_test.py"  // 手动指定你的入口文件
+  }
+}
