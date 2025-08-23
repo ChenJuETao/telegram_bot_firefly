@@ -37,12 +37,13 @@ def re_reply(text):
 
 def get_reply(user_message):
     global messages
-    messages.append({"role": "user", "content": f"【当前时间：{beijing_time.strftime('%Y-%m-%d %H:%M:%S')}】{user_message}"})
 
     # 获取当前北京时间
     now_utc = datetime.now(pytz.utc)
     beijing_time = now_utc.astimezone(pytz.timezone('Asia/Shanghai'))
     
+    messages.append({"role": "user", "content": f"【当前时间：{beijing_time.strftime('%Y-%m-%d %H:%M:%S')}】{user_message}"})
+
     # 生成多条回复
     reply_count = random.randint(1, 3)  # 随机N条回复
     all_replies = []
