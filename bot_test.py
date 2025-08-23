@@ -42,8 +42,9 @@ def get_reply(user_message):
     
     for i in range(1,reply_count+1):
         response = client.chat.completions.create(
-            model="deepseek-v3",
+            model="deepseek-chat",
             messages=messages,
+            temperature=1.2,
             stream=False
         )
         auto_reply = response.choices[0].message.content
