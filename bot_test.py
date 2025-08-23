@@ -6,7 +6,9 @@ import sys
 import re
 import pandas as pd
 import os
+import pytz
 from openai import OpenAI
+from datetime import datetime
 
 from prompt_firefly1 import prompt_firefly
 import sys
@@ -14,6 +16,7 @@ import random
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")  # 从环境变量读取
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY")
+MODEL_TEMP = float(os.environ.get("MODEL_TEMP"))
 client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url="https://api.deepseek.com")
 
 messages = [
@@ -34,8 +37,12 @@ def re_reply(text):
 
 def get_reply(user_message):
     global messages
-    messages.append({"role": "user", "content": user_message})
+    messages.append({"role": "user", "content": f"【当前时间：{beijing_time.strftime('%Y-%m-%d %H:%M:%S')}】{user_message}"})
 
+    # 获取当前北京时间
+    now_utc = datetime.now(pytz.utc)
+    beijing_time = now_utc.astimezone(pytz.timezone('Asia/Shanghai'))
+    
     # 生成多条回复
     reply_count = random.randint(1, 3)  # 随机N条回复
     all_replies = []
@@ -44,7 +51,7 @@ def get_reply(user_message):
         response = client.chat.completions.create(
             model="deepseek-chat",
             messages=messages,
-            temperature=1.2,
+            temperature=MODEL_TEMP,
             stream=False
         )
         auto_reply = response.choices[0].message.content
