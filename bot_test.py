@@ -12,7 +12,9 @@ from prompt_firefly1 import prompt_firefly
 import sys
 import random
 
-client = OpenAI(api_key="sk-fac4f17d57db4120bfb12e9474c5149c", base_url="https://api.deepseek.com")
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")  # 从环境变量读取
+DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY")
+client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url="https://api.deepseek.com")
 
 messages = [
     {
@@ -53,8 +55,6 @@ def get_reply(user_message):
             
     return all_replies
 
-TOKEN = "8177031461:AAFU_d1jwBUPfbJ9foBBUJ0t1IWbVZsdEqo"
-
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('来聊聊天吧，开拓者~')
@@ -80,9 +80,9 @@ def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
 
 async def start_auto_messaging(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """启动自动消息服务"""
-    # if context.job_queue is None:
-    #     await update.message.reply_text("❌ 无法启动定时消息")
-    #     return
+    if context.job_queue is None:
+        await update.message.reply_text("❌ 无法启动定时消息")
+        return
     
     chat_id = update.message.chat.id
     interval = random.randint(600, 1800)  # 测试用短时间，实际可用 1800-7200（30-120分钟）
@@ -132,13 +132,7 @@ async def on_startup(application: Application):
 
 from telegram.request import HTTPXRequest
 def main():
-    application = Application.builder().token(TOKEN).build()
-    # application = (
-    #     Application.builder()
-    #     .token(TOKEN)
-    #     .get_updates_request(HTTPXRequest(proxy_url="http://127.0.0.1:10808"))
-    #     .build()
-    # )
+    application = Application.builder().token(TELEGRAM_TOKEN).build()
 
     # 添加处理器
     application.add_handler(CommandHandler("start", start))
