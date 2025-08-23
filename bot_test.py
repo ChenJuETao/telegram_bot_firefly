@@ -42,7 +42,7 @@ def get_reply(user_message):
     
     for i in range(1,reply_count+1):
         response = client.chat.completions.create(
-            model="deepseek-chat",
+            model="deepseek-v3",
             messages=messages,
             stream=False
         )
